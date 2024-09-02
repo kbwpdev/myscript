@@ -23,7 +23,7 @@ check_root
 
 # Update and install dependencies
 apt update
-apt install -y xvfb x11vnc xfce4 tightvncserver python3-xdg openbox curl
+apt install -y xvfb x11vnc xfce4 tightvncserver python3-xdg openbox curl jq
 sleep 3
 
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
@@ -38,13 +38,26 @@ mkdir -p /root/nodepay
 # Change to the nodepay directory
 cd /root/nodepay
 
-# Download files using the token
-curl -H "Authorization: token $GITHUB_TOKEN" -L -o manifest.json https://api.github.com/repos/kbwpdev/nodepay/contents/manifest.json?ref=main
-curl -H "Authorization: token $GITHUB_TOKEN" -L -o background.js https://api.github.com/repos/kbwpdev/nodepay/contents/background.js?ref=main
+# Function to download and decode file from GitHub
+download_and_decode() {
+    local filename=$1
+    local url="https://api.github.com/repos/kbwpdev/nodepay/contents/${filename}?ref=main"
+    
+    # Download file content using GitHub API
+    response=$(curl -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3.raw" -L "$url")
+    
+    # Extract the base64 encoded content
+    content=$(echo "$response" | jq -r '.content' | tr -d '\n')
+    
+    # Decode the content and save to file
+    echo "$content" | base64 -d > "$filename"
+    
+    echo "Downloaded and decoded: $filename"
+}
 
-# Decode the content (GitHub API returns base64 encoded content)
-base64 -d manifest.json > manifest.json.decoded && mv manifest.json.decoded manifest.json
-base64 -d background.js > background.js.decoded && mv background.js.decoded background.js
+# Download and decode files
+download_and_decode "manifest.json"
+download_and_decode "background.js"
 
 # Create the startup script
 cat << 'EOF' > /root/start_chrome_vnc.sh
