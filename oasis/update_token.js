@@ -141,6 +141,11 @@ module.exports = {
   console.log('database.js created and updated with new token');
 }
 
+function generateClinetName() {
+    const randomNumber = Math.random().toString(36).substring(2, 15); // Generates a random alphanumeric string
+    return `c_${randomNumber}`;
+}
+
 async function main(params) {
   try {
     const email = params.email
@@ -150,7 +155,7 @@ async function main(params) {
     const authToken = await login(email, password);
     console.log('Auth token:', authToken);
 
-    const clientName = await question('Enter client name: ');
+    const clientName = generateClinetName()
 
     console.log('Getting extension token...');
     const extensionToken = await getExtensionToken(authToken, clientName);
