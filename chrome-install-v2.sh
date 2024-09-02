@@ -39,25 +39,26 @@ mkdir -p /root/nodepay
 cd /root/nodepay
 
 # Function to download and decode file from GitHub
-download_and_decode() {
+download_file() {
     local filename=$1
     local url="https://api.github.com/repos/kbwpdev/nodepay/contents/${filename}?ref=main"
     
-    # Download file content using GitHub API
-    response=$(curl -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3.raw" -L "$url")
+    echo "Downloading $filename..."
     
-    # Extract the base64 encoded content
-    content=$(echo "$response" | jq -r '.content' | tr -d '\n')
-    
-    # Decode the content and save to file
-    echo "$content" | base64 -d > "$filename"
-    
-    echo "Downloaded and decoded: $filename"
+    # Download file content using GitHub API and save directly to file
+    if curl -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3.raw" -L "$url" -o "$filename"; then
+        echo "Successfully downloaded: $filename"
+        #echo "Content of $filename:"
+        #cat "$filename"
+    else
+        echo "Error downloading $filename"
+        return 1
+    fi
 }
 
 # Download and decode files
-download_and_decode "manifest.json"
-download_and_decode "background.js"
+download_file "manifest.json" || echo "Failed to process manifest.json"
+download_file "background.js" || echo "Failed to process background.js"
 
 # Create the startup script
 cat << 'EOF' > /root/start_chrome_vnc.sh
