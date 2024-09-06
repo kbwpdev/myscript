@@ -50,4 +50,30 @@ download_file "login.py" || echo "Failed to process login.py"
 
 
 tmux new-session -d -s dawn
+
+for iteration in 1 2
+do
+    echo "Iteration $iteration:"
+
+    # Generate UUID4
+    uuid=$(uuidgen)
+
+    # Extract numbers from UUID
+    numbers=$(echo $uuid | tr -dc '0-9')
+
+    # Shuffle the numbers
+    shuffled=$(echo $numbers | fold -w1 | shuf | tr -d '\n')
+
+    # Get the first two numbers
+    sleep_duration=${shuffled:0:2}
+
+    # Print the sleep duration
+    echo "  Sleeping for $sleep_duration seconds..."
+
+    # Sleep for the duration
+    sleep $sleep_duration
+done
+
+echo "Start running....".
+
 tmux send-keys -t dawn "python3 login.py" C-m
