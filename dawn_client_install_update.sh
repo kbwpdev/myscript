@@ -50,4 +50,3 @@ download_file "login.py" || echo "Failed to process login.py"
 tmux kill-session -t dawn
 tmux new-session -d -s dawn
 tmux send-keys -t dawn "python3 login.py" C-m
-tmux attach-session -t dawn
