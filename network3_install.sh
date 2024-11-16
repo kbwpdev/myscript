@@ -10,7 +10,7 @@ sudo ufw allow 8080
 sudo apt-get install -y net-tools
 
 # Download and extract ubuntu-node
-wget https://network3.io/ubuntu-node-v1.1.tar
+wget https://network3.io/ubuntu-node-v2.1.0.tar
 tar -xf ubuntu-node-v1.1.tar
 cd ubuntu-node
 
