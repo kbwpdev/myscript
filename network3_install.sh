@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Update package list
-sudo apt update
-
 # Allow traffic on port 8080
 sudo ufw allow 8080
 
@@ -17,7 +14,7 @@ cd ubuntu-node
 # Run manager.sh
 sudo bash manager.sh up
 
-sleep 10
+sleep 5
 
 # Get the key and store it in p_param
 p_param=$(sudo bash manager.sh key)
